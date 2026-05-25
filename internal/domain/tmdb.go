@@ -1,20 +1,20 @@
 package domain
 
 type MediaResult struct {
-	adult             bool     `json:"adult"`
-	backdrop_path     string   `json:"backdrop_path"`
-	id                int      `json:"id"`
-	original_name     string   `json:"original_name"`
-	name              string   `json:"name"`
-	overview          string   `json:"overview"`
-	poster_path       string   `json:"poster_path"`
-	media_type        string   `json:"media_type"`
-	original_languaje string   `json:"original_language"`
-	genre_ids         []int    `json:"genre_ids"`
-	popularity        float64  `json:"popularity"`
-	first_air_date    string   `json:"first_air_date"`
-	softcore          bool     `json:"softcore"`
-	vote_average      float64  `json:"vote_average"`
-	vote_count        int      `json:"vote_count"`
-	origin_country    []string `json:"origin_country"`
+	Adult            bool     `json:"adult"`
+	BackdropPath     string   `json:"backdrop_path"`
+	ID               int      `json:"id"`
+	OriginalName     string   `json:"original_name"`
+	Name             string   `json:"name"`
+	Overview         string   `json:"overview"`
+	PosterPath       string   `json:"poster_path"`
+	MediaType        string   `json:"media_type"`
+	OriginalLanguage string   `json:"original_language"`
+	GenreIDs         []int    `json:"genre_ids"`
+	Popularity       float64  `json:"popularity"`
+	FirstAirDate     string   `json:"first_air_date"`
+	Softcore         bool     `json:"softcore"`
+	VoteAverage      float64  `json:"vote_average"`
+	VoteCount        int      `json:"vote_count"`
+	OriginCountry    []string `json:"origin_country"`
 }

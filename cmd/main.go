@@ -1,13 +1,30 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"os"
+
+	"MovieTrackerBack/internal/infrastructure/http"
+	"MovieTrackerBack/internal/infrastructure/postgres"
+)
 
 func main() {
-	router := gin.Default()
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	router.Run()
+	// TODO: Inicializar servicios y handlers reales
+	// itemsHandler := handlers.NewItemsHandler(...)
+	// listaHandler := handlers.NewListaHandler(...)
+
+	router := http.NewRouter(nil, nil) // Pasando nil temporalmente
+
+	db, err := postgres.NewConnection(os.Getenv("host"), os.Getenv("port"), os.Getenv("user"), os.Getenv("password"), os.Getenv("dbname"))
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		fmt.Println("cerrando conexion a la base de datos")
+		db.Close()
+	}()
+
+	router.Run(os.Getenv("app_port"))
+
+
 }
