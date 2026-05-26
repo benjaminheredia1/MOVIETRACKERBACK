@@ -3,7 +3,6 @@ package domain
 import "time"
 
 type ITEMREOPOSITORY interface {
-	
 	Add(item ITEM) error
 	GetAll(filters Filters) ([]ITEM, error)
 	GetByID(id int) (*ITEM, error)
@@ -16,6 +15,7 @@ type LISTAREOPOSITORY interface {
 	GetAll(filters Filters) ([]LISTA, error)
 	GetByID(id int) (*LISTA, error)
 	Delete(id int) error
+	Update(list LISTA) error
 }
 
 type LISTA_ITEMREOPOSITORY interface {
@@ -35,7 +35,6 @@ type LISTA_ITEMREOPOSITORY interface {
 // 	Delete(key string) error
 // }
 
-// type MediaRepository interface {
-// 	Search(query string, mediaType string) ([]MediaResult, error)
-// 	GetDetail(tmdbID int, mediaType string) (*MediaDetail, error)
-// } 
+type MediaRepository interface {
+	Search(query string) ([]MediaResult, error)
+}

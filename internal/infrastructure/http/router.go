@@ -25,8 +25,9 @@ func NewRouter(
 	api.GET("/lists/:id", listaHandler.GetByID)
 	api.POST("/lists", listaHandler.Add)
 	api.DELETE("/lists/:id", listaHandler.Delete)
-
+	api.PUT("/lists/:id", listaHandler.Update)
 	// Busqueda TMDB
+
 	api.GET("/search", itemsHandler.Search)
 
 	// Chat
