@@ -17,7 +17,6 @@ type TMDBClient struct {
 	client  *resty.Client
 	redis   *redis.CacheRepository
 }
-)
 
 func NewTMDBClient(apiKey string, baseURL string, redis *redis.CacheRepository) *TMDBClient {
 	return &TMDBClient{apiKey: apiKey, baseURL: baseURL, client: resty.New(), redis: redis}
@@ -65,6 +64,20 @@ func (c *TMDBClient) Search(query string) ([]domain.MediaResult, error) {
 	return searchResp.Results, nil
 }
 
-func (c *TMDBClient) Recomendations(query string) ([]domain.MediaResult, error) {
-	// Recomendaciones 
+func (c *TMDBClient) Recomendations() ([]domain.MediaResult, error) {
+	var searchResp tmdbSearchResponse
+
+	// Recomendaciones
+	resp, err := c.client.R().
+		SetHeader("Authorization", "Bearer "+c.apiKey).
+		SetResult(&searchResp).
+		Get(c.baseURL + "/person/popular/")
+
+	if err != nil {
+		return nil, fmt.Errorf("error calling tmdb: %w", err)
+	}
+	if resp.IsError() {
+		return nil, fmt.Errorf("tmdb api error: %s", resp.Status())
+	}
+	return searchResp.Results, nil
 }

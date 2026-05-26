@@ -120,6 +120,15 @@ func (h *ItemsHandler) Search(c *gin.Context) {
 	c.JSON(http.StatusOK, results)
 }
 
+func (h *ItemsHandler) Recomendations(c *gin.Context) {
+	results, err := h.service.Recomendations()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, results)
+}
+
 // POST /chat
 func (h *ItemsHandler) Chat(c *gin.Context) {
 	// esto lo implementamos cuando hagamos el agente

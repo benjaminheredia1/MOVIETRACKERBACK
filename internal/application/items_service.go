@@ -58,3 +58,6 @@ func (s *ItemsService) Search(query string) ([]domain.MediaResult, error) {
 
 	return s.service.Search(query)
 }
+func (s *ItemsService) Recomendations() ([]domain.MediaResult, error) {
+	return s.service.Recomendations()
+}

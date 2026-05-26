@@ -29,7 +29,7 @@ func NewRouter(
 	// Busqueda TMDB
 
 	api.GET("/search", itemsHandler.Search)
-
+	api.GET("/recomendations", itemsHandler.Recomendations)
 	// Chat
 	api.POST("/chat", itemsHandler.Chat)
 

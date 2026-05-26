@@ -37,4 +37,5 @@ type LISTA_ITEMREOPOSITORY interface {
 
 type MediaRepository interface {
 	Search(query string) ([]MediaResult, error)
+	Recomendations() ([]MediaResult, error)
 }
