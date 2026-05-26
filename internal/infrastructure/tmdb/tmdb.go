@@ -71,7 +71,7 @@ func (c *TMDBClient) Recomendations() ([]domain.MediaResult, error) {
 	resp, err := c.client.R().
 		SetHeader("Authorization", "Bearer "+c.apiKey).
 		SetResult(&searchResp).
-		Get(c.baseURL + "/person/popular/")
+		Get(c.baseURL + "/person/popular")
 
 	if err != nil {
 		return nil, fmt.Errorf("error calling tmdb: %w", err)
