@@ -9,6 +9,7 @@ import (
 func NewRouter(
 	itemsHandler *handlers.ItemsHandler,
 	listaHandler *handlers.ListaHandler,
+	chatHandler *handlers.ChatHandler,
 ) *gin.Engine {
 	r := gin.Default()
 	api := r.Group("/api")
@@ -26,12 +27,13 @@ func NewRouter(
 	api.POST("/lists", listaHandler.Add)
 	api.DELETE("/lists/:id", listaHandler.Delete)
 	api.PUT("/lists/:id", listaHandler.Update)
-	// Busqueda TMDB
 
+	// Busqueda TMDB
 	api.GET("/search", itemsHandler.Search)
 	api.GET("/recomendations", itemsHandler.Recomendations)
+
 	// Chat
-	api.POST("/chat", itemsHandler.Chat)
+	api.POST("/chat", chatHandler.Chat)
 
 	return r
 }

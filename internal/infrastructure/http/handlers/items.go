@@ -128,8 +128,3 @@ func (h *ItemsHandler) Recomendations(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, results)
 }
-
-// POST /chat
-func (h *ItemsHandler) Chat(c *gin.Context) {
-	// esto lo implementamos cuando hagamos el agente
-}

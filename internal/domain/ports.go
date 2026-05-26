@@ -24,16 +24,10 @@ type LISTA_ITEMREOPOSITORY interface {
 	Delete(listID int, itemID int) error
 }
 
-// type ChatRepository interface {
-// 	SaveMessage(msg ChatMessage) error
-// 	GetHistory(sessionID string) ([]ChatMessage, error)
-// }
-
-// type CacheRepository interface {
-// 	Get(key string) ([]byte, error)
-// 	Set(key string, value []byte, ttl time.Duration) error
-// 	Delete(key string) error
-// }
+type ChatRepository interface {
+	GenerateMessage(msg ChatMessage) (string, error)
+	GetHistory(sessionID string) ([]ChatMessage, error)
+}
 
 type MediaRepository interface {
 	Search(query string) ([]MediaResult, error)

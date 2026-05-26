@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
-
 	"MovieTrackerBack/internal/application"
 	"MovieTrackerBack/internal/infrastructure/http"
 	"MovieTrackerBack/internal/infrastructure/http/handlers"
+	"MovieTrackerBack/internal/infrastructure/openai"
 	"MovieTrackerBack/internal/infrastructure/postgres"
 	"MovieTrackerBack/internal/infrastructure/redis"
 	"MovieTrackerBack/internal/infrastructure/tmdb"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -37,6 +38,13 @@ func main() {
 	//conexion a redis
 	redisClient := redis.NewConnection(os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"), os.Getenv("REDIS_PASSWORD"))
 	redisCache := redis.NewCacheRepository(redisClient)
+
+	//Cliente de openai que mas adelante se inyectara
+	model := os.Getenv("OPENAI_MODEL")
+	if model == "" {
+		model = "gpt-4"
+	}
+
 	// Inyeccion de dependencias para TMDB
 	tmdbClient := tmdb.NewTMDBClient(os.Getenv("TMDB_API_KEY"), os.Getenv("TMDB_BASE_URL"), redisCache)
 
@@ -51,7 +59,12 @@ func main() {
 	listaService := application.NewListaService(listaRepo)
 	listaHandler := handlers.NewListaHandler(listaService)
 
-	router := http.NewRouter(itemsHandler, listaHandler)
+	//Inyeccion de dependencias para el chat
+	openaiClient := openai.NewOpenAIClient(redisCache, os.Getenv("OPENAI_API_KEY"), model, itemRepo, listaRepo)
+	chatService := application.NewChatService(openaiClient)
+	chatHandler := handlers.NewChatHandler(chatService)
+
+	router := http.NewRouter(itemsHandler, listaHandler, chatHandler)
 
 	router.Run(":" + os.Getenv("app_port"))
 
