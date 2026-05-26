@@ -36,7 +36,7 @@ func (c *OpenAIClient) GenerateMessage(msg domain.ChatMessage) (string, error) {
 	}
 
 	var messages []openai.ChatCompletionMessageParamUnion
-	
+
 	systemPrompt := `Eres un asistente personal experto en películas y series, integrado en una aplicación estilo Letterboxd/Trakt.
 Tienes acceso directo a la base de datos personal del usuario mediante herramientas (tools).
 Tu trabajo es responder a las consultas del usuario usando esta información y tu propio conocimiento sobre cine y televisión.
@@ -72,19 +72,40 @@ Reglas:
 		}
 
 		choice := response.Choices[0]
-		
-		// Añadir el mensaje del asistente (que puede contener la petición de tool call) al historial
-		messages = append(messages, choice.Message.ToParam())
 
 		if len(choice.Message.ToolCalls) > 0 {
-			for _, toolCall := range choice.Message.ToolCalls {
-				toolResult, err := c.executeTool(toolCall.Function.Name)
+
+			var truncatedToolCalls []openai.ChatCompletionMessageToolCallParam
+			for _, tc := range choice.Message.ToolCalls {
+				callID := tc.ID
+				if len(callID) > 64 {
+					callID = callID[:64]
+				}
+				truncatedToolCalls = append(truncatedToolCalls, openai.ChatCompletionMessageToolCallParam{
+					ID: callID,
+					Function: openai.ChatCompletionMessageToolCallFunctionParam{
+						Name:      tc.Function.Name,
+						Arguments: tc.Function.Arguments,
+					},
+				})
+			}
+
+			assistantParam := openai.ChatCompletionAssistantMessageParam{
+				ToolCalls: truncatedToolCalls,
+			}
+			if choice.Message.Content != "" {
+				assistantParam.Content.OfString = openai.String(choice.Message.Content)
+			}
+			messages = append(messages, openai.ChatCompletionMessageParamUnion{OfAssistant: &assistantParam})
+
+			for _, tc := range truncatedToolCalls {
+				toolResult, err := c.executeTool(tc.Function.Name)
 				if err != nil {
 					toolResult = "Error al ejecutar la herramienta: " + err.Error()
 				}
-				messages = append(messages, openai.ToolMessage(toolCall.ID, toolResult))
+				messages = append(messages, openai.ToolMessage(toolResult, tc.ID))
 			}
-			continue // Volver a llamar a OpenAI con los resultados
+			continue
 		}
 
 		respContent := choice.Message.Content
