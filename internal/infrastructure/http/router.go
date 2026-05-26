@@ -1,34 +1,36 @@
 package http
 
 import (
-    "github.com/gin-gonic/gin"
-    "MovieTrackerBack/internal/infrastructure/http/handlers"
+	"MovieTrackerBack/internal/infrastructure/http/handlers"
+
+	"github.com/gin-gonic/gin"
 )
 
 func NewRouter(
-    itemsHandler *handlers.ItemsHandler,
-    listaHandler *handlers.ListaHandler,
+	itemsHandler *handlers.ItemsHandler,
+	listaHandler *handlers.ListaHandler,
 ) *gin.Engine {
-    r := gin.Default()
+	r := gin.Default()
+	api := r.Group("/api")
 
-    // Items
-    r.GET("/items", itemsHandler.GetAll)
-    r.GET("/items/:id", itemsHandler.GetByID)
-    r.POST("/items", itemsHandler.Add)
-    r.PATCH("/items/:id/watched", itemsHandler.MarkAsWatched)
-    r.DELETE("/items/:id", itemsHandler.Delete)
+	// Items
+	api.GET("/items", itemsHandler.GetAll)
+	api.GET("/items/:id", itemsHandler.GetByID)
+	api.POST("/items", itemsHandler.Add)
+	api.PATCH("/items/:id/watched", itemsHandler.MarkAsWatched)
+	api.DELETE("/items/:id", itemsHandler.Delete)
 
-    // Listas
-    r.GET("/lists", listaHandler.GetAll)
-    r.GET("/lists/:id", listaHandler.GetByID)
-    r.POST("/lists", listaHandler.Add)
-    r.DELETE("/lists/:id", listaHandler.Delete)
+	// Listas
+	api.GET("/lists", listaHandler.GetAll)
+	api.GET("/lists/:id", listaHandler.GetByID)
+	api.POST("/lists", listaHandler.Add)
+	api.DELETE("/lists/:id", listaHandler.Delete)
 
-    // Busqueda TMDB
-    r.GET("/search", itemsHandler.Search)
+	// Busqueda TMDB
+	api.GET("/search", itemsHandler.Search)
 
-    // Chat
-    r.POST("/chat", itemsHandler.Chat)
+	// Chat
+	api.POST("/chat", itemsHandler.Chat)
 
-    return r
+	return r
 }

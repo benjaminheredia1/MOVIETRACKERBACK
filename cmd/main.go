@@ -4,18 +4,26 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
+
+	"MovieTrackerBack/internal/application"
 	"MovieTrackerBack/internal/infrastructure/http"
+	"MovieTrackerBack/internal/infrastructure/http/handlers"
 	"MovieTrackerBack/internal/infrastructure/postgres"
 )
 
 func main() {
-	// TODO: Inicializar servicios y handlers reales
-	// itemsHandler := handlers.NewItemsHandler(...)
-	// listaHandler := handlers.NewListaHandler(...)
+	godotenv.Load()
 
-	router := http.NewRouter(nil, nil) // Pasando nil temporalmente
+	host := os.Getenv("host")
+	port := os.Getenv("port")
+	user := os.Getenv("user")
+	password := os.Getenv("password")
+	dbname := os.Getenv("dbname")
 
-	db, err := postgres.NewConnection(os.Getenv("host"), os.Getenv("port"), os.Getenv("user"), os.Getenv("password"), os.Getenv("dbname"))
+	postgres.RunMigrations(host, port, user, password, dbname)
+
+	db, err := postgres.NewConnection(host, port, user, password, dbname)
 	if err != nil {
 		panic(err)
 	}
@@ -24,7 +32,13 @@ func main() {
 		db.Close()
 	}()
 
-	router.Run(os.Getenv("app_port"))
+	//Inyeccion de dependencias
+	itemRepo := postgres.NewItemRepository(db)
+	itemService := application.NewItemsListService(itemRepo)
+	itemsHandler := handlers.NewItemsHandler(itemService)
 
+	router := http.NewRouter(itemsHandler, nil)
+
+	router.Run(":" + os.Getenv("app_port"))
 
 }
